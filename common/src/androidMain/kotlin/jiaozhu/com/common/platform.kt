@@ -9,6 +9,6 @@ actual fun getPlatformName(): String {
 }
 
 @Composable
-actual fun getImage(res: String): ImageBitmap? {
+actual fun getImage(res: String): ImageBitmap {
     return ImageBitmap.imageResource(id = R.drawable.item)
 }

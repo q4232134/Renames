@@ -19,40 +19,59 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.unit.dp
+import androidx.compose.material.TextField
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.foundation.text.*
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
 
 
 data class Message(val author: String, val body: String)
 
+val list = ArrayList<Message>()
+
 @Composable
 fun App() {
-    Column(modifier = Modifier.background(Color.LightGray).fillMaxSize()) {
-        SearchBar()
-        val list = ArrayList<Message>()
-        for (i in 1..40)
-            list.add(Message("Android", "Jetpack Compose"))
-        Conversation(list)
+    for (i in 1..40)
+        list.add(Message("Android", "Jetpack Compose"))
+    Scaffold(
+        bottomBar = { SootheBottomNavigation() }
+    ) {
+        Column(modifier = Modifier.background(Color.LightGray).fillMaxSize()) {
+            SearchBar()
+            Column(modifier = Modifier.padding(2.dp)) {
+                Conversation(list)
+            }
+        }
     }
+
+
 }
 
 
 @Composable
 fun SearchBar() {
-    var s = ""
+    var text by remember { mutableStateOf("") }
     TextField(
-        value = "12312312",
+        value = text,
         enabled = true,
-        onValueChange = { s = it },
-        leadingIcon = {
+        onValueChange = { text = it },
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        trailingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = "null"
             )
         },
         colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = MaterialTheme.colors.surface
+            backgroundColor = MaterialTheme.colors.surface,
+            textColor = MaterialTheme.colors.primary
         ),
-        //软件键盘选项
-        modifier = Modifier.height(30.dp).fillMaxWidth()
+        placeholder = { Text("搜索") },
+        singleLine = true,
+        modifier = Modifier.heightIn(min = 30.dp).padding(3.dp).fillMaxWidth()
     )
 }
 
@@ -73,11 +92,11 @@ fun messageCard(msg: Message) {
             .background(Color.White).fillMaxWidth()
     ) {
         var exp by rememberSaveable { mutableStateOf(false) }
-        Row(modifier = Modifier.clickable {
+        Row(modifier = Modifier.fillMaxWidth().clickable {
             exp = !exp
         }) {
             Image(
-                painter = BitmapPainter(getImage("1.png")!!),
+                painter = BitmapPainter(getImage("1.png")),
                 contentDescription = "Sample",
                 modifier = Modifier
                     .size(30.dp)
@@ -101,3 +120,35 @@ fun messageCard(msg: Message) {
     }
 }
 
+
+@Composable
+fun SootheBottomNavigation(modifier: Modifier = Modifier) {
+    BottomNavigation(modifier) {
+        BottomNavigationItem(
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Home,
+                    contentDescription = null
+                )
+            },
+            label = {
+                Text("home")
+            },
+            selected = true,
+            onClick = {}
+        )
+        BottomNavigationItem(
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = null
+                )
+            },
+            label = {
+                Text("settings")
+            },
+            selected = false,
+            onClick = {}
+        )
+    }
+}
